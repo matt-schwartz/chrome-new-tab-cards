@@ -1,0 +1,76 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="images/icon_48.png">
+
+    <title>New Tab</title>
+
+    <link href="vendor/bootstrap.min.css" rel="stylesheet">
+    <link href="vendor/dragula.min.css" rel="stylesheet">
+    <link href="new-tab-cards.css" rel="stylesheet">
+
+    <script src="vendor/jquery.min.js"></script>
+    <script src="vendor/dragula.min.js"></script>
+    <script src="index.js"></script>
+    <script src="cards.js"></script>
+    <script src="config.js"></script>
+  </head>
+
+  <body>
+
+    <div class="container">
+      <div class="row">
+        <div id="left-col" class="col-6"></div>
+        <div id="right-col" class="col-6"></div>
+      </div>
+
+      <div class="d-flex justify-content-center footer">
+        <div class="p-2">
+          <a id="configure" href="#">Configure</a>
+        </div>
+        <div class="p-2">
+          <a href="#">About</a>
+        </div>
+      </div>
+
+    </div>
+
+    <div id="card-template" class="card" style="display: none;">
+
+      <div class="card-front">
+        <div class="card-block">
+          <h5 class="card-title"></h5>
+        </div>
+      </div>
+
+      <div class="card-config" style="display: none">
+        <div class="card-block d-flex justify-content-between">
+          <h5 class="card-title"></h5>
+
+          <form method="GET" class="form-inline">
+
+            <div class="btn-group config-count">
+              <button type="button" class="btn btn-sm btn-info" value="5">5</button>
+              <button type="button" class="btn btn-sm btn-secondary" value="10">10</button>
+              <button type="button" class="btn btn-sm btn-secondary" value="15">15</button>
+              <button type="button" class="btn btn-sm btn-secondary" value="20">20</button>
+            </div>
+
+            <div class="btn-group config-switch">
+              <button type="button" class="btn btn-sm btn-success" value="on">ON</button>
+              <button type="button" class="btn btn-sm btn-secondary" value="off">OFF</button>
+            </div>
+          </form>
+
+        </div>
+      </div>
+
+    </div>
+
+  </body>
+</html>

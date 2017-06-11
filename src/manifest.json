@@ -1,0 +1,28 @@
+{
+	"name": "New Tab Cards",
+	"version": "0.1",
+	"minimum_chrome_version": "57",
+	"manifest_version": 2,
+	"description": "New tab page with customizable card displays for most visited, bookmarks, recently closed, and other starting points.",
+	"icons": {
+		"128": "images/icon_128.png",
+		 "48": "images/icon_48.png",
+		 "16": "images/icon_16.png"
+	},
+	"permissions": [
+		"bookmarks",
+		"topSites",
+		"management",
+		"tabs",
+		"sessions",
+		"storage",
+		"chrome://favicon/"
+	],
+	"chrome_url_overrides":
+	{
+		"newtab": "new-tab-cards.html"
+	},
+	"web_accessible_resources": [
+		"new-tab-cards.html"
+	]
+}
