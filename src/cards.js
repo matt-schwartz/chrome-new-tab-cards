@@ -38,7 +38,20 @@ function listLinks(card, urls) {
 		var img = $("<img>").attr("src", "chrome://favicon/" + urls[i].url);
 		a.prepend(img);
 	}
-	card.show();
+
+	var store = {};
+	var key = card.attr("id") + "-count";
+	store[key] = 10;
+	chrome.storage.sync.get(store, function(items) {
+		var count = items[key];
+		showLinkCount(card, count);
+		card.show();
+	});
+}
+
+function showLinkCount(card, count) {
+	$(".list-group-item", card).filter(":gt(" + (count - 1) + ")").hide();
+	$(".list-group-item", card).filter(":lt(" + count + ")").show();
 }
 
 function showTime() {

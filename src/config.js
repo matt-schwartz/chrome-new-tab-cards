@@ -40,7 +40,7 @@ $(function() {
 		return false;
 	});
 	
-	$(".config-switch > button").on("click", function(e) {
+	$(document).on("click", ".config-switch > button", function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -62,7 +62,7 @@ $(function() {
 		return false;
 	});
 
-	$(".config-count > button").on("click", function(e) {
+	$(document).on("click", ".config-count > button", function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -74,7 +74,13 @@ $(function() {
 		btn.siblings().removeClass("btn-info").addClass("btn-secondary");
 		btn.removeClass("btn-secondary").addClass("btn-info");
 		
-		// TODO: Save
+		var count = btn.val();
+		var card = btn.closest('.card');
+		showLinkCount(card, count);
+		
+		var store = {};
+		store[card.attr("id") + "-count"] = count;
+		chrome.storage.sync.set(store);
 
 		return false;
 	});
