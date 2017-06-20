@@ -10,11 +10,14 @@ function show(id, column) {
 		case "most-visited":
 			createMostVisited(column);
 			break;
-		case "clock":
-			createClock(column);
-			break;
 		case "recently-closed":
 			createRecentlyClosed(column);
+			break;
+		case "other-devices":
+			createOtherDevices(column);
+			break;
+		case "clock":
+			createClock(column);
 			break;
 	}
 }
@@ -28,8 +31,14 @@ function createCard(id, title, column, callback) {
 }
 
 function listLinks(card, urls) {
-	var list = $("<ul>").attr("class", "list-group list-group-flush links card-front-extended");
-	card.append(list);
+	var list = null;
+	var group = $(".links", card);
+	if (group.length === 0) {
+		list = $("<ul>").attr("class", "list-group list-group-flush links card-front-extended");
+		card.append(list);
+	} else {
+		list = group.first();
+	}
 	for (let i = 0; i < urls.length; i++) {
 		var li = $("<li>").addClass('list-group-item');
 		list.append(li);
@@ -52,6 +61,37 @@ function listLinks(card, urls) {
 	if ($("#configure").data("state") === "configuring") {
 		$(".config-count", card).show();
 	}
+}
+
+function listSessions(card, sessions, max) {
+	var count = 0;
+	var urls = [];
+	function addTab(tab) {
+		if (tab.url.startsWith('http://') || tab.url.startsWith('https://')) {
+			urls.push({url: tab.url, title: tab.title});
+			count++;
+		}
+	}
+	for (let i = 0; i < sessions.length; i++) {
+		if (count > max) {
+			break;
+		}
+		let session = sessions[i];
+		let tab = null;
+		if (session.window && session.window.tabs) {
+			for (let j = 0; j < session.window.tabs.length; j++) {
+				if (count > max) {
+					break;
+				}
+				addTab(session.window.tabs[j]);
+			}
+		} else {
+			addTab(session.tab);
+		}
+	}
+	listLinks(card, urls);
+
+	return count;
 }
 
 function showLinkCount(card, count) {
@@ -92,6 +132,21 @@ function createMostVisited(column) {
 	});
 }
 
+function createOtherDevices(column) {
+	createCard("other-devices", "Other Devices", column, function(card) {
+		chrome.sessions.getDevices({maxResults: MAX_LINK_COUNT}, function(devices) {
+			var count = 0;
+			for (let i = 0; i < devices.length; i++) {
+				let device = devices[i];
+				count += listSessions(card, device.sessions, MAX_LINK_COUNT - count);
+				if (count >= MAX_LINK_COUNT) {
+					break;
+				}
+			}
+		});
+	});
+}
+
 function createClock(column) {
 	createCard("clock", "Clock", column, function(card) {
 		clock = $(".card-front .card-title", card);
@@ -105,33 +160,7 @@ function createClock(column) {
 function createRecentlyClosed(column) {
 	createCard("recently-closed", "Recently Closed", column, function(card) {
 		chrome.sessions.getRecentlyClosed({maxResults: MAX_LINK_COUNT}, function(sessions) {
-			var count = 0;
-			var limit = MAX_LINK_COUNT;
-			var urls = [];
-			function addTab(tab) {
-				if (tab.url.startsWith('http://') || tab.url.startsWith('https://')) {
-					urls.push({url: tab.url, title: tab.title});
-					count++;
-				}
-			}
-			for (var i = 0; i < sessions.length; i++) {
-				if (count > limit) {
-					break;
-				}
-				var session = sessions[i];
-				var tab = null;
-				if (session.window && session.window.tabs) {
-					for (var j = 0; j < session.window.tabs.length; j++) {
-						if (count > limit) {
-							break;
-						}
-						addTab(session.windows.tabs[i]);
-					}
-				} else {
-					addTab(session.tab);
-				}
-			}
-			listLinks(card, urls);
+			listSessions(card, sessions, MAX_LINK_COUNT);
 		});
 	});
 }
