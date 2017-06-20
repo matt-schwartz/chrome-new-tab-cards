@@ -13,6 +13,9 @@ function show(id, column) {
 		case "recently-closed":
 			createRecentlyClosed(column);
 			break;
+		case "bookmarks":
+			createBookmarks(column);
+			break;
 		case "other-devices":
 			createOtherDevices(column);
 			break;
@@ -94,6 +97,44 @@ function listSessions(card, sessions, max) {
 	return count;
 }
 
+function listBookmarks(card, folderid) {
+	chrome.bookmarks.getChildren(folderid, function(nodes) {
+		$(".links", card).remove();
+		var count = 0;
+		var urls = [];
+		for (let i = 0; i < nodes.length; i++) {
+			if (count > MAX_LINK_COUNT) {
+				break;
+			}
+			let node = nodes[i];
+			if (node.url) {
+				urls.push(node);
+			}
+		}
+		listLinks(card, urls);
+	});
+
+	chrome.bookmarks.get(folderid, function(results) {
+		if (results.length > 0) {
+			$("#bookmarks .card-front .card-title").text(results[0].title);
+		}
+	});
+}
+
+function addBookmarkFolder(dropdown, nodes, depth) {
+	for (let i = 0; i < nodes.length; i++) {
+		let node = nodes[i];
+		if (!node.url) {
+			let title = "&nbsp;".repeat(depth * 3) + node.title;
+			let option = $("<option>").attr("value", node.id).html(title);
+			dropdown.append(option);
+		}
+		if (node.children && node.children.length > 0) {
+			addBookmarkFolder(dropdown, node.children, depth + 1);
+		}
+	}
+}
+
 function showLinkCount(card, count) {
 	$(".list-group-item", card).filter(":gt(" + (count - 1) + ")").hide();
 	$(".list-group-item", card).filter(":lt(" + count + ")").show();
@@ -143,6 +184,24 @@ function createOtherDevices(column) {
 					break;
 				}
 			}
+		});
+	});
+}
+
+function createBookmarks(column) {
+	createCard("bookmarks", "Bookmarks", column, function(card) {
+		chrome.bookmarks.getTree(function(results) {
+			if (results.length === 0 || results[0].children.length === 0) {
+				return;
+			}
+			var top = results[0];
+			var dropdown = $("<select>").attr('id', 'select-bookmark-folder');
+			$(".card-config form", card).prepend(dropdown);
+			chrome.storage.sync.get({bookmarkFolderId: top.children[0].id}, function(items) {
+				addBookmarkFolder(dropdown, top.children, 0);
+				dropdown.val(items.bookmarkFolderId);
+				listBookmarks(card, items.bookmarkFolderId);
+			});
 		});
 	});
 }

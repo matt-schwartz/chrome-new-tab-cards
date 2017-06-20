@@ -153,6 +153,17 @@ $(function() {
 		return false;
 	});
 
+	$(document).on("change", "#select-bookmark-folder", function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		var id = $(this).val();
+		chrome.storage.sync.set({bookmarkFolderId: id});
+		listBookmarks($("#bookmarks"), id);
+
+		return false;
+	});
+
 	drake.on("drop", function(el, target, source, sibling) {
 		saveCardLayout();
 	});

@@ -69,6 +69,10 @@ a img {
     width: 15rem;
 }
 
+#select-bookmark-folder {
+    font-size: 0.8rem;
+}
+
 .btn:focus {
     box-shadow: none !important;
 }
