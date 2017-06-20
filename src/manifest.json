@@ -24,5 +24,6 @@
 	},
 	"web_accessible_resources": [
 		"new-tab-cards.html"
-	]
+	],
+	"offline_enabled": true
 }

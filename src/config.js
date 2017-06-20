@@ -1,11 +1,66 @@
 'use strict';
 
 function getCardLayout(callback) {
-	var defaultCardOrder = {left: ["most-visited"], right: ["clock", "recently-closed"]};
-	chrome.storage.sync.get({cardOrder: defaultCardOrder}, function(items) {
+	chrome.storage.sync.get({cardOrder: DEFAULT_LAYOUT}, function(items) {
 		callback(items.cardOrder);
 	});
 }
+
+function saveCardLayout() {
+	var cardOrder = {left: [], right: []};
+	$('.card', '#left-col').each(function() {
+		cardOrder.left.push($(this).attr('id'));
+	});
+	$('.card', '#right-col').each(function() {
+		cardOrder.right.push($(this).attr('id'));
+	});
+	chrome.storage.sync.set({cardOrder: cardOrder});
+}
+
+function showAddLinks() {
+	var config = $("#configure").parent();
+	for (let i = 0; i < CARDS.length; i++) {
+		let id = CARDS[i];
+		if ($("#" + id).length === 0) {
+			showAddLink(config, id);
+		}
+	}	
+}
+
+function showAddLink(configLink, id) {
+	var div = $("<div>").addClass("p-4");
+	var text = id
+		.split("-")
+		.map(function (s) { return s.slice(0, 1).toUpperCase() + s.slice(1); })
+		.join(" ");
+	var a = $("<a>")
+		.addClass("add")
+		.attr("href", "#")
+		.data("card", id)
+		.text(text);
+	div.append(a);
+	div.hide().insertAfter(configLink).fadeIn("fast");
+}
+
+function showCardFronts() {
+	$(".card-config").hide();
+	$(".card-front").show();
+}
+
+function showCardConfigs() {
+	$(".card-front").hide();
+	$(".card-config").show();
+	$(".card").each(function() {
+		var card = $(this);
+		if (card.find(".links").length > 0) {
+			card.find(".config-count").show();
+		} else {
+			card.find(".config-count").hide();
+		}
+	});
+}
+
+// Event listeners
 
 $(function() {
 	var drake = dragula();
@@ -18,47 +73,61 @@ $(function() {
 		if (link.data('state') === 'configuring') {
 			link.text('Configure');
 			link.data('state', 'done');
-			$(".card-config").hide();
-			$(".card-front").show();
+			showCardFronts();
 			drake.containers.splice(0, drake.containers.length);
 		} else {
 			link.text('Done');
 			link.data('state', 'configuring');
-			$(".card-front").hide();
-			$(".card-config").show();
+			showCardConfigs();
 			drake.containers.push(document.getElementById("left-col"), document.getElementById("right-col"));
-			$(".card").each(function() {
-				var card = $(this);
-				if (card.find(".links").length > 0) {
-					card.find(".count").show();
-				} else {
-					card.find(".count").hide();
-				}
-			});
 		}
 
 		return false;
 	});
-	
-	$(document).on("click", ".config-switch > button", function(e) {
+
+	$(document).on("click", ".footer .add", function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 
-		var on = null;
-		var off = null;
-		if ($(this).val() === "on") {
-			on = $(this);
-			off = on.siblings().first();
+		var col = null;
+		var colStr = null;
+		var left = $("#left-col");
+		var right = $("#right-col");
+		if ($(".card", left).length > $(".card", right).length) {
+			col = right;
+			colStr = "right";
 		} else {
-			off = $(this);
-			on = off.siblings().first();
+			col = left;
+			colStr = "left";
 		}
+		var id = $(this).data("card");
+		show(id, col);
+		$(this).parent().remove();
 
-		on.toggleClass("btn-secondary").toggleClass("btn-success");
-		off.toggleClass("btn-secondary").toggleClass("btn-danger");
+		// Save
+		chrome.storage.sync.get({cardOrder: DEFAULT_LAYOUT}, function(items) {
+			var cardOrder = items.cardOrder;
+			cardOrder[colStr].push(id);
+			chrome.storage.sync.set({cardOrder: cardOrder});
+		});
 
-		// TODO: Save
-		
+		return false;
+	});
+
+	$(document).on("click", ".remove", function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		var card = $(this).closest('.card');
+		if (card.attr('id') === 'clock') {
+			clock = null;
+		}
+		card.fadeOut('fast', function() {
+			card.remove();
+			saveCardLayout();
+			showAddLink($("#configure").parent(), card.attr('id'));
+		});
+
 		return false;
 	});
 
@@ -71,13 +140,12 @@ $(function() {
 			// Nothing changes
 			return false;
 		}
-		btn.siblings().removeClass("btn-info").addClass("btn-secondary");
-		btn.removeClass("btn-secondary").addClass("btn-info");
+		activateCountButton(btn);
 		
 		var count = btn.val();
 		var card = btn.closest('.card');
 		showLinkCount(card, count);
-		
+
 		var store = {};
 		store[card.attr("id") + "-count"] = count;
 		chrome.storage.sync.set(store);
@@ -86,13 +154,6 @@ $(function() {
 	});
 
 	drake.on("drop", function(el, target, source, sibling) {
-		var cardOrder = {left: [], right: []};
-		$('.card', '#left-col').each(function() {
-			cardOrder.left.push($(this).attr('id'));
-		});
-		$('.card', '#right-col').each(function() {
-			cardOrder.right.push($(this).attr('id'));
-		});
-		chrome.storage.sync.set({cardOrder: cardOrder});
+		saveCardLayout();
 	});
 });

@@ -30,7 +30,7 @@ function createCard(id, title, column, callback) {
 function listLinks(card, urls) {
 	var list = $("<ul>").attr("class", "list-group list-group-flush links card-front-extended");
 	card.append(list);
-	for (var i = 0; i < urls.length; i++) {
+	for (let i = 0; i < urls.length; i++) {
 		var li = $("<li>").addClass('list-group-item');
 		list.append(li);
 		var a = $("<a>").attr("href", urls[i].url).text(urls[i].title);
@@ -41,12 +41,17 @@ function listLinks(card, urls) {
 
 	var store = {};
 	var key = card.attr("id") + "-count";
-	store[key] = 10;
+	store[key] = DEFAULT_LINK_COUNT;
 	chrome.storage.sync.get(store, function(items) {
 		var count = items[key];
 		showLinkCount(card, count);
-		card.show();
+		card.fadeIn('fast');
+		activateCountButton($(".config-count > button[value=" + count.toString() + "]", card));
 	});
+
+	if ($("#configure").data("state") === "configuring") {
+		$(".config-count", card).show();
+	}
 }
 
 function showLinkCount(card, count) {
@@ -54,7 +59,15 @@ function showLinkCount(card, count) {
 	$(".list-group-item", card).filter(":lt(" + count + ")").show();
 }
 
+function activateCountButton(btn) {
+	btn.siblings().removeClass("btn-info").addClass("btn-secondary");
+	btn.removeClass("btn-secondary").addClass("btn-info");
+}
+
 function showTime() {
+	if (!clock) {
+		return;
+	}
 	var time = new Date();
 	var h = time.getHours();
 	var m = time.getMinutes();
@@ -85,15 +98,15 @@ function createClock(column) {
 		clock.parent().addClass("text-center");
 		showTime();
 		setInterval(showTime, 10000);
-		card.show();
+		card.fadeIn('fast');
 	});
 }
 
 function createRecentlyClosed(column) {
 	createCard("recently-closed", "Recently Closed", column, function(card) {
-		chrome.sessions.getRecentlyClosed({maxResults: 10}, function(sessions) {
+		chrome.sessions.getRecentlyClosed({maxResults: MAX_LINK_COUNT}, function(sessions) {
 			var count = 0;
-			var limit = 10;
+			var limit = MAX_LINK_COUNT;
 			var urls = [];
 			function addTab(tab) {
 				if (tab.url.startsWith('http://') || tab.url.startsWith('https://')) {

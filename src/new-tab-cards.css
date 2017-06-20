@@ -13,7 +13,7 @@ body {
 a {
     color: #333;
 }
-a:hover, a:active {
+a:hover, a:active, a:link {
     text-decoration: none;
 }
 a img {
@@ -21,7 +21,7 @@ a img {
 }
 
 .footer a {
-    color: #ddd;
+    color: #aaa;
 }
 .footer a:hover {
     color: #ddd;
@@ -41,6 +41,10 @@ a img {
     margin: 0;
 }
 
+.card .list-group {
+    margin-bottom: 1rem;
+}
+
 .card .list-group-item {
     border: none;
     padding: 0;
@@ -52,10 +56,17 @@ a img {
 }
 .card .list-group-item a:hover {
     background-color: #ccdfff;
+    color: #333;
 }
 
 .card .btn-group {
     margin-left: 1em;
+}
+
+#add-menu {
+    background-color: #fff;
+    position: absolute;
+    width: 15rem;
 }
 
 .btn:focus {
