@@ -1,0 +1,18 @@
+Chrome New Tab Cards Extension
+==============================
+
+New Tab Cards is an extension for the Chrome browser.  It replaces the new tab page with customizable card displays for most visited, bookmarks, recently closed, and more.
+
+Install
+-------
+
+    npm install
+
+After downloading package dependencies this will run `copy_vendor.sh` and place the few necessary JS and CSS files into the `/src/vendor`.  This keeps the source directory clean for packaging the extension.
+
+TODO
+----
+
+In the future we plan on adding:
+- A Chrome Apps launcher card
+- A current weather card
