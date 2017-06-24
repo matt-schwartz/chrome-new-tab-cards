@@ -9,6 +9,10 @@ New Tab Cards is an extension for the Chrome browser.  It replaces the new tab p
 Install
 -------
 
+Distributed via the [Chrome Web Store](https://chrome.google.com/webstore/detail/new-tab-cards/idcpogancielddambnachkghlnjkfhci).
+
+Or after cloning this repo:
+
     npm install
 
 After downloading package dependencies this will run `copy_vendor.sh` and place the few necessary JS and CSS files into the `/src/vendor`.  This keeps the source directory clean for packaging the extension.
