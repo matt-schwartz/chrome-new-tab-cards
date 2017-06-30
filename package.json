@@ -4,7 +4,7 @@
   "description": "Chrome browser new tab page with customizable card displays",
   "main": "src/new-tab-cards.js",
   "scripts": {
-    "postinstall": "./copy_vendor.sh"
+    "postinstall": "chmod 777 ./copy_vendor.sh && ./copy_vendor.sh"
   },
   "keywords": [
     "chrome",
