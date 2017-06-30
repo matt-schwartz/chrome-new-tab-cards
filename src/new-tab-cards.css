@@ -48,6 +48,7 @@ a img {
 .card .list-group-item {
     border: none;
     padding: 0;
+    word-break: break-all;
 }
 
 .card .list-group-item a {

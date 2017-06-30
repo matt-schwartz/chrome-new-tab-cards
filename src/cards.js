@@ -36,19 +36,22 @@ function createCard(id, title, column, callback) {
 function listLinks(card, urls) {
 	var list = null;
 	var group = $(".links", card);
+	var li,anchor,img;
+
 	if (group.length === 0) {
 		list = $("<ul>").attr("class", "list-group list-group-flush links card-front-extended");
 		card.append(list);
 	} else {
 		list = group.first();
 	}
-	for (let i = 0; i < urls.length; i++) {
-		var li = $("<li>").addClass('list-group-item');
+
+	for (let i = 0, len=urls.length; i < len ; i++) {
+		li = $("<li>").addClass('list-group-item');
 		list.append(li);
-		var a = $("<a>").attr("href", urls[i].url).text(urls[i].title);
-		li.append(a);
-		var img = $("<img>").attr("src", "chrome://favicon/" + urls[i].url);
-		a.prepend(img);
+		anchor = $("<a>").attr("href", urls[i].url).text(urls[i].title);
+		li.append(anchor);
+		img = $("<img>").attr("src", "chrome://favicon/" + urls[i].url);
+		anchor.prepend(img);
 	}
 
 	var store = {};
@@ -75,7 +78,7 @@ function listSessions(card, sessions, max) {
 			count++;
 		}
 	}
-	for (let i = 0; i < sessions.length; i++) {
+	for (let i = 0, len=sessions.length; i < len; i++) {
 		if (count > max) {
 			break;
 		}
@@ -102,12 +105,13 @@ function listBookmarks(card, folderid) {
 		$(".links", card).remove();
 		var count = 0;
 		var urls = [];
-		for (let i = 0; i < nodes.length; i++) {
+		let node;
+		for (let i = 0, len = nodes.length; i < len; i++) {
 			if (count > MAX_LINK_COUNT) {
 				break;
 			}
-			let node = nodes[i];
-			if (node.url) {
+			node = nodes[i];
+			if (node && node.url) {
 				urls.push(node);
 			}
 		}
@@ -122,11 +126,15 @@ function listBookmarks(card, folderid) {
 }
 
 function addBookmarkFolder(dropdown, nodes, depth) {
-	for (let i = 0; i < nodes.length; i++) {
-		let node = nodes[i];
+	let title, optionElem = $("<option>"),option,node;
+
+	for (let i = 0, len=nodes.length; i <len ; i++) {
+		node = nodes[i];
+		
 		if (!node.url) {
-			let title = "&nbsp;".repeat(depth * 3) + node.title;
-			let option = $("<option>").attr("value", node.id).html(title);
+			title = "&nbsp;".repeat(depth * 3) + node.title;
+			optionElem = $("<option>");
+			option = optionElem.attr("value", node.id).html(title);
 			dropdown.append(option);
 		}
 		if (node.children && node.children.length > 0) {
@@ -146,23 +154,23 @@ function activateCountButton(btn) {
 }
 
 function showTime() {
-	if (!clock) {
-		return;
-	}
-	var time = new Date();
-	var h = time.getHours();
-	var m = time.getMinutes();
-	m = (m < 10 ? "0" : "") + m.toString();
-	var tod = "pm";
-	if (h < 12) {
-		tod = "am";
-		if (h == 0) {
-			h = 12;
+	if (!!clock) {
+		var time = new Date();
+		var h = time.getHours();
+		var m = time.getMinutes();
+		m = (m < 10 ? "0" : "") + m.toString();
+		var tod = "pm";
+		if (h < 12) {
+			tod = "am";
+			if (h == 0) {
+				h = 12;
+			}
+		} else if (h > 12) {
+			h = h - 12;
 		}
-	} else if (h > 12) {
-		h = h - 12;
+		clock.text(h + ":" + m + " " + tod);
 	}
-	clock.text(h + ":" + m + " " + tod);
+
 }
 
 function createMostVisited(column) {
@@ -176,9 +184,9 @@ function createMostVisited(column) {
 function createOtherDevices(column) {
 	createCard("other-devices", "Other Devices", column, function(card) {
 		chrome.sessions.getDevices({maxResults: MAX_LINK_COUNT}, function(devices) {
-			var count = 0;
-			for (let i = 0; i < devices.length; i++) {
-				let device = devices[i];
+			var count = 0,device;
+			for (let i = 0, len = devices.length; i < len; i++) {
+				device = devices[i];
 				count += listSessions(card, device.sessions, MAX_LINK_COUNT - count);
 				if (count >= MAX_LINK_COUNT) {
 					break;
@@ -191,17 +199,20 @@ function createOtherDevices(column) {
 function createBookmarks(column) {
 	createCard("bookmarks", "Bookmarks", column, function(card) {
 		chrome.bookmarks.getTree(function(results) {
-			if (results.length === 0 || results[0].children.length === 0) {
-				return;
+
+			if (results.length && results[0].children.length) {
+				var top = results[0];
+				var dropdown = $("<select>").attr('id', 'select-bookmark-folder');
+				$(".card-config form", card).prepend(dropdown);
+				chrome.storage.sync.get({
+					bookmarkFolderId: top.children[0].id
+				}, function(items) {
+					addBookmarkFolder(dropdown, top.children, 0);
+					dropdown.val(items.bookmarkFolderId);
+					listBookmarks(card, items.bookmarkFolderId);
+				});
 			}
-			var top = results[0];
-			var dropdown = $("<select>").attr('id', 'select-bookmark-folder');
-			$(".card-config form", card).prepend(dropdown);
-			chrome.storage.sync.get({bookmarkFolderId: top.children[0].id}, function(items) {
-				addBookmarkFolder(dropdown, top.children, 0);
-				dropdown.val(items.bookmarkFolderId);
-				listBookmarks(card, items.bookmarkFolderId);
-			});
+
 		});
 	});
 }
