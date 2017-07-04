@@ -52,8 +52,11 @@ a img {
 }
 
 .card .list-group-item a {
-    width: 100%;
+    overflow: hidden;
     padding: 0.5rem 1.25rem;
+    text-overflow: ellipsis;
+    width: 100%;
+    white-space: nowrap;
 }
 .card .list-group-item a:hover {
     background-color: #ccdfff;
