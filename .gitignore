@@ -1,5 +1,9 @@
 .DS_Store
 node_modules
-src/vendor/*
-dist/*
 npm-debug.log
+
+src/keys.js
+src/images/*.svg
+src/vendor/*
+
+dist/*

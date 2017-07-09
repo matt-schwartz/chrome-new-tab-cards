@@ -1,6 +1,6 @@
 {
 	"name": "New Tab Cards",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"author": "Matthew Schwartz",
 	"minimum_chrome_version": "56",
 	"manifest_version": 2,
@@ -17,7 +17,8 @@
 		"tabs",
 		"sessions",
 		"storage",
-		"chrome://favicon/"
+		"chrome://favicon/",
+		"http://api.openweathermap.org/"
 	],
 	"chrome_url_overrides":
 	{

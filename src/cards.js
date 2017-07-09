@@ -22,6 +22,9 @@ function show(id, column) {
 		case "clock":
 			createClock(column);
 			break;
+		case "weather":
+			createWeather(column);
+			break;
 	}
 }
 
@@ -170,7 +173,47 @@ function showTime() {
 		}
 		clock.text(h + ":" + m + " " + tod);
 	}
+}
 
+function loadWeatherByZip(container, zip) {
+	$.ajax({
+		url: "http://api.openweathermap.org/data/2.5/weather",
+		data: {
+			zip: zip,
+			APPID: WEATHER_KEY,
+			units: "imperial"
+		},
+		contentType: "application/json",
+		dataType: "json",
+		error: function(xhr, status, error) {
+			// Keep "Offline" card text, just log the error for debugging
+			console.log("AJAX request for weather failed: " + error);
+		},
+		success: function(data, status, xhr) {
+			chrome.storage.local.set({weather: data, weatherTimestamp: Date.now()});
+			showWeather(container, data);
+		}
+	});
+}
+
+function showWeather(container, data) {
+	var weatherId = data.weather[0].id;
+	var imageName = "sun";
+	if (weatherId < 300) {
+		imageName = "bolt";
+	} else if (weatherId < 800) {
+		imageName = "rain";
+	} else if (weatherId == 800) {
+		imageName = "sun";
+	} else if (weatherId < 903) {
+		imageName = "cloudy";
+	} else if (weatherId >= 960) {
+		imageName = "cloud";
+	}
+	var desc = data.weather[0].description;
+	desc = desc.charAt(0).toUpperCase() + desc.slice(1);
+	container.html(Math.round(data.main.temp) + '&deg;F ' + desc + " in " + data.name);
+	container.prepend($("<img>").attr("src", "images/" + imageName + ".svg"));
 }
 
 function createMostVisited(column) {
@@ -219,7 +262,7 @@ function createBookmarks(column) {
 
 function createClock(column) {
 	createCard("clock", "Clock", column, function(card) {
-		clock = $(".card-front .card-title", card);
+		var clock = $(".card-front .card-title", card);
 		clock.parent().addClass("text-center");
 		showTime();
 		setInterval(showTime, 10000);
@@ -234,3 +277,36 @@ function createRecentlyClosed(column) {
 		});
 	});
 }
+
+function createWeather(column) {
+	createCard("weather", "Weather", column, function(card) {
+		var container = $("<p>")
+			.addClass("card-text")
+			.attr("id", "weather-container")
+			.insertAfter($(".card-front .card-title", card));
+		container.text("Offline");
+		chrome.storage.local.get({weather: null, weatherTimestamp: 0}, function(items) {
+			// Weather cached for 30 minutes
+			if (items.weather && Date.now() - items.weatherTimestamp < 1800000) {
+				showWeather(container, items.weather);
+			} else {
+				chrome.storage.sync.get({weatherZip: "10001"}, function(items) {
+					loadWeatherByZip(container, items.weatherZip);
+				});
+			}
+		});
+
+		chrome.storage.sync.get({weatherZip: "10001"}, function(items) {
+			var zipInput = $("<input>")
+				.attr("id", "weather-zip")
+				.attr("type", "text")
+				.val(items.weatherZip);
+			$(".card-config form", card)
+				.prepend(zipInput)
+				.prepend($("<label>").text("Zip"));
+		});
+
+		card.fadeIn('fast');
+	});
+}
+

@@ -1,10 +1,14 @@
 {
   "name": "new-tab-cards",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Chrome browser new tab page with customizable card displays",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/matt-schwartz/chrome-new-tab-cards"
+  },
   "main": "src/new-tab-cards.js",
   "scripts": {
-    "postinstall": "chmod 777 ./copy_vendor.sh && ./copy_vendor.sh"
+    "postinstall": "chmod 777 ./postinstall.sh && ./postinstall.sh"
   },
   "keywords": [
     "chrome",
@@ -15,6 +19,7 @@
   "dependencies": {
     "bootstrap": "^4.0.0-alpha.6",
     "dragula": "^3.7.2",
-    "jquery": "^3.2.1"
+    "jquery": "^3.2.1",
+    "open-iconic": "^1.1.1"
   }
 }

@@ -164,6 +164,17 @@ $(function() {
 		return false;
 	});
 
+	$(document).on("change", "#weather-zip", function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		var zip = $(this).val();
+		chrome.storage.sync.set({weatherZip: zip});
+		loadWeatherByZip($("#weather-container"), zip);
+
+		return false;
+	});
+
 	drake.on("drop", function(el, target, source, sibling) {
 		saveCardLayout();
 	});

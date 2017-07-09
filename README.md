@@ -15,13 +15,23 @@ Or after cloning this repo:
 
     npm install
 
-After downloading package dependencies this will run `copy_vendor.sh` and place the few necessary JS and CSS files into the `/src/vendor`.  This keeps the source directory clean for packaging the extension.
+After downloading package dependencies this will run `postinstall.sh` and place the few necessary JS and CSS files into the `/src/vendor`.  This keeps the source directory clean for packaging the extension.
+
+Sign up for an API key with OpenWeatherMap.org and paste it into `src/keys.js`.
 
 Browse to `chrome://extensions/`, turn on developer mode, click "Load unpacked extension...", and choose the `src` directory.
+
+Attribution
+-----------
+
+Weather data provided by [OpenWeatherMap.org](https://openweathermap.org/).
+
+Contributors:
+- [Nishant Kumar](https://github.com/nishant8BITS)
 
 TODO
 ----
 
 In the future we plan on adding:
 - A Chrome Apps launcher card
-- A current weather card
+- Better weather icons
