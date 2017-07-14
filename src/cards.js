@@ -75,29 +75,39 @@ function listLinks(card, urls) {
 function listSessions(card, sessions, max) {
 	var count = 0;
 	var urls = [];
+
 	function addTab(tab) {
 		if (tab.url.startsWith('http://') || tab.url.startsWith('https://')) {
 			urls.push({url: tab.url, title: tab.title});
 			count++;
 		}
 	}
-	for (let i = 0, len=sessions.length; i < len; i++) {
-		if (count > max) {
-			break;
-		}
-		let session = sessions[i];
-		let tab = null;
-		if (session.window && session.window.tabs) {
-			for (let j = 0; j < session.window.tabs.length; j++) {
-				if (count > max) {
-					break;
-				}
-				addTab(session.window.tabs[j]);
-			}
+
+	/*
+		Get Maximum allowed session list
+	 */
+	sessions = sessions.slice(0, max);
+
+	/*
+		Do iteration and make create list of links
+	 */
+	sessions.forEach(function(session, index){
+
+		/*
+			Does user has also opened some of tabs in new window ? If so then 
+			take into account those top session as well :) 
+		 */
+		if (session.window && session.window.tabs && (max - count) > 0) {
+			[].concat(session.window.tabs.slice(0,(max-count))).
+					forEach(function(tabSession){
+						addTab(tabSession);
+					});
+
 		} else {
 			addTab(session.tab);
 		}
-	}
+	});
+
 	listLinks(card, urls);
 
 	return count;
