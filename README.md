@@ -32,13 +32,6 @@ Weather data provided by [OpenWeatherMap.org](https://openweathermap.org/).
 Contributors:
 - [Nishant Kumar](https://github.com/nishant8BITS)
 
-TODO
-----
-
-- A Chrome Apps launcher card
-- Better weather icons
-- Recently closed restore sessions
-
 
 [badge-cws]: https://img.shields.io/chrome-web-store/v/idcpogancielddambnachkghlnjkfhci.svg?label=chrome
 [link-cws]: https://chrome.google.com/webstore/detail/new-tab-cards/idcpogancielddambnachkghlnjkfhci "Published on Chrome Web Store"
