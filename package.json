@@ -1,6 +1,6 @@
 {
   "name": "new-tab-cards",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Chrome browser new tab page with customizable card displays",
   "repository": {
     "type": "git",
@@ -17,7 +17,7 @@
   "author": "Matthew Schwartz",
   "license": "MIT",
   "dependencies": {
-    "bootstrap": "^4.0.0-alpha.6",
+    "bootstrap": "4.1.2",
     "dragula": "^3.7.2",
     "jquery": "^3.2.1",
     "open-iconic": "^1.1.1"

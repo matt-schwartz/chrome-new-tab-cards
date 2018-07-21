@@ -1,7 +1,7 @@
 'use strict';
 
 const CARDS = ["most-visited", "recently-closed", "bookmarks", "other-devices", "weather", "clock"];
-const DEFAULT_LAYOUT = {left: ["most-visited"], right: ["weather", "recently-closed"]};
+const DEFAULT_LAYOUT = {left: ["most-visited", "other-devices"], right: ["weather", "clock", "recently-closed"]};
 const DEFAULT_LINK_COUNT = 10;
 const MAX_LINK_COUNT = 20;
 

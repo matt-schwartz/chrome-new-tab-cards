@@ -4,10 +4,36 @@ html {
 }
 
 body {
-    background-color: #56617f;
     height: 100%;
     overflow: auto;
     padding: 2em 0 0 0;
+    color: #333;
+    background: linear-gradient(
+        0deg, 
+        rgba(0, 48, 180, 0) 20%, 
+        rgba(0, 48, 180, 0.1) 20%, 
+        rgba(0, 48, 180, 0.1) 40%, 
+        rgba(0, 48, 180, 0.2) 40%, 
+        rgba(0, 48, 180, 0.2) 60%, 
+        rgba(0, 48, 180, 0.4) 60%, 
+        rgba(0, 48, 180, 0.4) 80%, 
+        rgba(0, 48, 180, 0.6) 80%
+    ), 
+    linear-gradient(-90deg, 
+        rgba(0, 48, 180, 0) 20%, 
+        rgba(0, 48, 180, 0.1) 20%, 
+        rgba(0, 48, 180, 0.1) 40%, 
+        rgba(0, 48, 180, 0.2) 40%, 
+        rgba(0, 48, 180, 0.2) 60%, 
+        rgba(0, 48, 180, 0.4) 60%, 
+        rgba(0, 48, 180, 0.4) 80%, 
+        rgba(0, 48, 180, 0.6) 80%
+    ), 
+    rgb(7, 197, 0);
+    background-position: auto auto;
+    background-origin: padding-box;
+    background-clip: border-box;
+    background-size: 100% 100%;
 }
 
 a {
@@ -23,10 +49,10 @@ img {
 }
 
 .footer a {
-    color: #aaa;
+    color: #ddd;
 }
 .footer a:hover {
-    color: #ddd;
+    color: #fff;
 }
 
 .icon {
@@ -39,12 +65,17 @@ img {
     min-height: 3em;
 }
 
+.card .card-body {
+    background-color: rgb(243, 243, 243);
+}
+
 .card .card-title {
     margin: 0;
 }
 
-.card .list-group {
-    margin-bottom: 1rem;
+.card h5.card-title {
+    color: #56617f;
+    font-size: 1.15rem;
 }
 
 .card .list-group-item {
@@ -54,6 +85,7 @@ img {
 }
 
 .card .list-group-item a {
+    display: inline-block;
     overflow: hidden;
     padding: 0.5rem 1.25rem;
     text-overflow: ellipsis;

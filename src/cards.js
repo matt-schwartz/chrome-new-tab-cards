@@ -167,7 +167,7 @@ function activateCountButton(btn) {
 }
 
 function showTime() {
-	if (!!clock) {
+	if (clock) {
 		var time = new Date();
 		var h = time.getHours();
 		var m = time.getMinutes();
@@ -272,7 +272,7 @@ function createBookmarks(column) {
 
 function createClock(column) {
 	createCard("clock", "Clock", column, function(card) {
-		var clock = $(".card-front .card-title", card);
+		clock = $(".card-front .card-title", card);
 		clock.parent().addClass("text-center");
 		showTime();
 		setInterval(showTime, 10000);
